@@ -1,0 +1,10 @@
+#!/bin/bash
+
+seen=()
+
+while read -r line; do
+    if [[ ! " ${seen[@]} " =~ " $line " ]]; then
+        seen+=("$line")
+        echo "$line"
+    fi
+done
