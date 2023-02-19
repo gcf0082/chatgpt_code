@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>List with Filter, Sort and Search</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+</head>
+<body>
+  <div>
+    <input type="text" id="filter" placeholder="Filter...">
+    <select id="sort">
+      <option value="">Sort by:</option>
+      <option value="name-asc">Name (A-Z)</option>
+      <option value="name-desc">Name (Z-A)</option>
+      <option value="date-asc">Date (Earliest-Latest)</option>
+      <option value="date-desc">Date (Latest-Earliest)</option>
+    </select>
+    <input type="text" id="search" placeholder="Search...">
+  </div>
+  <table id="list">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+  <script>
+    const fetchData = async () => {
+      const response = await fetch('https://example.com/list');
+      if (response.ok) {
+        const data = await response.json();
+        const html = data.map(item => `<tr><td>${item.name}</td><td>${item.date}</td></tr>`).join('');
+        $('#list tbody').html(html);
+        $('#list').DataTable();
+        $('#filter').on('keyup', function() {
+          $('#list').DataTable().search($(this).val()).draw();
+        });
+        $('#sort').on('change', function() {
+          const value = $(this).val();
+          if (value === '') {
+            $('#list').DataTable().order([]);
+          } else {
+            const [column, order] = value.split('-');
+            $('#list').DataTable().order([[column, order]]).draw();
+          }
+        });
+        $('#search').on('keyup', function() {
+          const value = $(this).val();
+          if (value === '') {
+            $('#list').DataTable().search('').draw();
+          } else {
+            $('#list').DataTable().search(value).draw();
+          }
+        });
+      } else {
+        console.error('Failed to fetch data');
+      }
+    };
+    fetchData();
+  </script>
+</body>
+</html>
