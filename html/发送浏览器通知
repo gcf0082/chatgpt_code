@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>发送浏览器通知的示例</title>
+  </head>
+  <body>
+    <h1>发送浏览器通知的示例</h1>
+    <p>点击下面的按钮发送通知：</p>
+    <button onclick="sendNotification()">发送通知</button>
+    
+    <script>
+      function sendNotification() {
+        if ('Notification' in window) {
+          Notification.requestPermission().then(function (permission) {
+            if (permission === 'granted') {
+              var notification = new Notification('通知的标题', {
+                body: '通知的正文',
+                icon: '通知的图标'
+              });
+            }
+          });
+        }
+      }
+    </script>
+  </body>
+</html>
