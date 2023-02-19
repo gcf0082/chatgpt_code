@@ -1,0 +1,53 @@
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.concurrent.TimeUnit;
+
+@RestController
+public class ElasticsearchController {
+
+    @GetMapping("/search")
+    public String search(@RequestParam(value = "regex") String regex) throws UnknownHostException {
+        // 建立 Elasticsearch 客户端连接
+        TransportClient client = new PreBuiltTransportClient(Settings.EMPTY)
+                .addTransportAddress(new TransportAddress(InetAddress.getByName("localhost"), 9300));
+
+        // 构造查询语句
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+                .query(QueryBuilders.boolQuery()
+                        .must(QueryBuilders.rangeQuery("@timestamp").gte("now-5m").lte("now"))
+                        .must(QueryBuilders.regexpQuery("message", regex))
+                )
+                .size(1000);
+
+        // 发送查询请求
+        SearchResponse response = client.prepareSearch("my_index")
+                .setSource(searchSourceBuilder)
+                .get(new TimeValue(60, TimeUnit.SECONDS));
+
+        // 解析查询结果
+        SearchHits hits = response.getHits();
+        StringBuilder result = new StringBuilder();
+        for (SearchHit hit : hits) {
+            result.append(hit.getSourceAsString()).append("\n");
+        }
+
+        // 关闭 Elasticsearch 客户端连接
+        client.close();
+
+        return result.toString();
+    }
+}
