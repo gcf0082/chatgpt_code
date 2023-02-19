@@ -165,3 +165,4 @@ private static void registerShutdownHook(final GraphDatabaseService graphDb) {
 private static enum Labels implements Label {
     Person
 }
+    }
