@@ -1,0 +1,60 @@
+from smb.SMBServer import SMBServer
+from smb.SMBHandler import SMBHandler
+import os
+
+class MySMBServer(SMBServer):
+    def __init__(self, server_name, server_host, server_ip, *args, **kwargs):
+        SMBServer.__init__(self, server_name, server_host, server_ip, *args, **kwargs)
+
+    def on_connect(self):
+        print("Client connected")
+
+    def on_disconnect(self):
+        print("Client disconnected")
+
+    def on_login(self, username, password):
+        print(f"User {username} logged in")
+
+    def on_logout(self, username):
+        print(f"User {username} logged out")
+
+    def on_tree_connect(self, path, share):
+        return True
+
+    def on_read(self, file_id, offset, length):
+        with open(file_id.path, 'rb') as f:
+            f.seek(offset)
+            data = f.read(length)
+        return data
+
+    def on_write(self, file_id, offset, data):
+        with open(file_id.path, 'r+b') as f:
+            f.seek(offset)
+            f.write(data)
+        return len(data)
+
+    def on_open(self, path, access):
+        return os.path.isfile(path)
+
+    def on_create(self, path):
+        with open(path, 'wb') as f:
+            f.write(b'')
+        return True
+
+    def on_delete(self, path):
+        os.remove(path)
+        return True
+
+    def on_remove_directory(self, path):
+        os.rmdir(path)
+        return True
+
+    def on_create_directory(self, path):
+        os.mkdir(path)
+        return True
+
+if __name__ == "__main__":
+    server = MySMBServer("MySMBServer", "0.0.0.0", "127.0.0.1")
+    server.add_credentials("username", "password")
+    server.add_share("MyShare", "/path/to/share")
+    server.serve_forever()
