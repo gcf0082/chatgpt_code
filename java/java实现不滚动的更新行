@@ -1,0 +1,17 @@
+public class Countdown {
+    public static void main(String[] args) throws InterruptedException {
+        for (int i = 1; i <= 10; i++) {
+            // 将光标移动到行首，并清除该行
+            System.out.print("\r\033[K");
+
+            // 显示更新的内容
+            System.out.print("Countdown: " + (10 - i));
+
+            // 等待一段时间
+            Thread.sleep(1000);
+        }
+
+        // 输出一个空行
+        System.out.println();
+    }
+}
