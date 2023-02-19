@@ -1,0 +1,22 @@
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	for i := 0; i < 10; i++ {
+		// 将光标移动到行首，并清除该行
+		fmt.Print("\r\x1b[K")
+
+		// 显示更新的内容
+		fmt.Printf("Countdown: %d", 10-i)
+
+		// 等待一段时间
+		time.Sleep(time.Second)
+	}
+
+	// 输出一个空行
+	fmt.Println()
+}
