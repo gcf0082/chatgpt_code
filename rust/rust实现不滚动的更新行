@@ -1,0 +1,19 @@
+use std::{io::Write, thread, time};
+
+fn main() {
+    for i in 1..=10 {
+        // 将光标移动到行首，并清除该行
+        print!("\r\x1b[K");
+        std::io::stdout().flush().unwrap();
+
+        // 显示更新的内容
+        print!("Countdown: {}", 10 - i);
+        std::io::stdout().flush().unwrap();
+
+        // 等待一段时间
+        thread::sleep(time::Duration::from_secs(1));
+    }
+
+    // 输出一个空行
+    println!();
+}
