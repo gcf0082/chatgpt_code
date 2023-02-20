@@ -1,3 +1,4 @@
+//cargo install libc backtrace
 //rustc -g -O -C prefer-dynamic -C relocation-model=pic -C link-arg=-shared -o libfopen_interceptor.so libfopen_interceptor.rs
 
 use std::os::raw::{c_char, c_int};
