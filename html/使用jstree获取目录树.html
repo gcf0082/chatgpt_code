@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>jstree 文件浏览前端示例</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css" />
+</head>
+<body>
+    <div id="file_tree"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"></script>
+    <script>
+        $(function () {
+            $('#file_tree').jstree({
+                "core": {
+                    "data": {
+                        "url": "/get_file_tree",
+                        "dataType": "json"
+                    },
+                    "check_callback": true
+                },
+                "plugins": ["contextmenu", "dnd", "types", "state", "dblclick_toggle"],
+                "types": {
+                    "#": {
+                        "valid_children": ["folder"]
+                    },
+                    "folder": {
+                        "icon": "jstree-folder",
+                        "valid_children": ["folder", "file"]
+                    },
+                    "file": {
+                        "icon": "jstree-file"
+                    }
+                },
+                "contextmenu": {
+                    "items": function(node) {
+                        var items = {
+                            "create": {
+                                "label": "创建",
+                                "action": function(data) {
+                                    var ref = $.jstree.reference('#file_tree'),
+                                        sel = ref.get_selected();
+                                    if (!sel.length) {
+                                        return false;
+                                    }
+                                    sel = sel[0];
+                                    sel = ref.create_node(sel, {"type": "folder"});
+                                    if (sel) {
+                                        ref.edit(sel);
+                                    }
+                                }
+                            },
+                            "rename": {
+                                "label": "重命名",
+                                "action": function(data) {
+                                    var inst = $.jstree.reference(data.reference),
+                                        obj = inst.get_node(data.reference);
+                                    inst.edit(obj);
+                                }
+                            },
+                            "delete": {
+                                "label": "删除",
+                                "action": function(data) {
+                                    var ref = $.jstree.reference('#file_tree'),
+                                        sel = ref.get_selected();
+                                    if (!sel.length) {
+                                        return false;
+                                    }
+                                    ref.delete_node(sel);
+                                }
+                            }
+                        };
+                        if (node.type === "file") {
+                            delete items.create;
+                        }
+                        return items;
+                    }
+                },
+                "dnd": {
+                    "is_draggable": function(node) {
+                        return node.type === "file";
+                    }
+                },
+                "state": {
+                    "key": "file_tree"
+                },
+                "dblclick_toggle": function(node, event) {
+                    if (node.type === "folder" && node.children.length === 0) {
+                        $('#file_tree').jstree('toggle_node', node);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
