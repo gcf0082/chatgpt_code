@@ -1,0 +1,19 @@
+$ cargo new my_library --lib
+
+
+Cargo.toml文件内容
+
+[lib]
+name = "my_library"
+crate-type = ["cdylib"]
+
+创建文件src/lib.rs，代码如下
+#[no_mangle]
+pub extern "C" fn add(a: i32, b: i32) -> i32 {
+    a + b
+}
+
+命令执行
+$ cargo build --release
+
+target/release/libmy_library.so
