@@ -1,0 +1,64 @@
+local nmap = require "nmap"
+local shortport = require "shortport"
+
+-- 定义插件元数据
+local NAME = "tcp-scan"
+local DESCRIPTION = "Scans TCP ports"
+
+-- 插件的参数表
+-- 在运行时可以通过在命令行上指定参数来修改这些参数的值
+-- 使用这些参数来指定要扫描的端口范围和超时时间等
+-- 可以通过 `nmap --script-help <script_name>` 查看插件参数的帮助信息
+local port_range = nmap.new_portrange()
+local timeout = 1000
+
+local function scan(host, port)
+    -- 扫描一个指定的TCP端口，并返回相应的扫描结果
+    local result = nmap.new_port()
+    result.state = "unknown"
+    result.protocol = "tcp"
+    result.portid = port.number
+
+    -- 创建一个TCP连接，尝试连接指定的端口
+    local status, err = nmap.new_socket():connect(host, port.number, "tcp", timeout)
+
+    if status then
+        -- 如果连接成功，则将端口状态标记为open
+        result.state = "open"
+    else
+        -- 如果连接失败，则将端口状态标记为closed
+        result.state = "closed"
+    end
+
+    return result
+end
+
+-- 插件入口函数
+local function run(host, port)
+    -- 对于指定的主机和端口范围进行TCP端口扫描
+    local results = {}
+    local ports = shortport.getports(port_range, "tcp", "open")
+    for _, p in ipairs(ports) do
+        table.insert(results, scan(host, p))
+    end
+
+    -- 返回扫描结果
+    return nmap.new_nse_result(results)
+end
+
+-- 注册插件元数据和入口函数
+-- 在Nmap扫描过程中，会自动加载所有注册的插件，并在需要的时候调用相应的入口函数
+-- 使用 `nmap --script <script_name> <target>` 命令来运行插件
+-- 在运行时可以通过命令行参数来修改插件的参数表中的值
+-- 使用 `nmap --script-help <script_name>` 命令来查看插件参数的帮助信息
+local function register()
+    local script = nmap.new_script(NAME, DESCRIPTION)
+    script:set_arguments({
+        {name = "ports", type = "string", default = "1-1000", help = "Port range to scan (e.g. 1-1000)"},
+        {name = "timeout", type = "integer", default = 1000, help = "Connection timeout in milliseconds"}
+    })
+    script:register_hostscript(run)
+end
+
+-- 调用注册函数，将插件元数据和入口函数注册到Nmap
+register()
