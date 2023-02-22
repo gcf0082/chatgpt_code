@@ -1,0 +1,30 @@
+require "logstash/outputs/base"
+require "logstash/namespace"
+
+class LogStash::Outputs::Tcp < LogStash::Outputs::Base
+  config_name "tcp"
+  
+  # 远程TCP服务器的地址和端口
+  config :host, :validate => :string, :required => true
+  config :port, :validate => :number, :required => true
+
+  public
+  def register
+    require "socket"
+    @socket = TCPSocket.new(@host, @port)
+  end
+
+  public
+  def receive(event)
+    # 从事件对象中提取需要发送的数据
+    data = event.to_json + "\n"
+
+    # 发送数据到远程TCP服务器
+    @socket.puts(data)
+  end
+
+  public
+  def close
+    @socket.close
+  end
+end
