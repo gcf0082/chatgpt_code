@@ -1,0 +1,16 @@
+编译
+mvn clean package
+
+安装
+elasticsearch-plugin install file:///path/to/match-value-plugin.jar
+
+使用
+GET /my_index/_search
+{
+  "query": {
+    "match_value": {
+      "message": "hello world"
+    }
+  }
+}
+
