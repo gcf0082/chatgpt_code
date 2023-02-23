@@ -1,0 +1,43 @@
+public List<Long> getAncestors(long nodeId) throws SQLException {
+
+    List<Long> ancestors = new ArrayList<>();
+
+    Set<Long> visited = new HashSet<>();
+
+    Stack<Long> stack = new Stack<>();
+
+    stack.push(nodeId);
+
+    visited.add(nodeId);
+
+    while (!stack.isEmpty()) {
+
+        long current = stack.pop();
+
+        List<Long> parents = getParents(current);
+
+        if (parents.isEmpty()) {
+
+            ancestors.add(current);
+
+        }
+
+        for (long parent : parents) {
+
+            if (!visited.contains(parent)) {
+
+                ancestors.add(parent);
+
+                stack.push(parent);
+
+                visited.add(parent);
+
+            }
+
+        }
+
+    }
+
+    return ancestors;
+
+}
