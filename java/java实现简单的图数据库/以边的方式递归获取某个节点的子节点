@@ -1,0 +1,16 @@
+public List<Edge> getChildEdges(Node node) {
+    List<Edge> childEdges = new ArrayList<>();
+    Set<Node> visited = new HashSet<>();
+    dfsChildEdges(node, childEdges, visited);
+    return childEdges;
+}
+
+private void dfsChildEdges(Node node, List<Edge> childEdges, Set<Node> visited) {
+    visited.add(node);
+    for (Edge edge : edges) {
+        if (edge.getSourceNode().equals(node) && !visited.contains(edge.getDestNode())) {
+            childEdges.add(edge);
+            dfsChildEdges(edge.getDestNode(), childEdges, visited);
+        }
+    }
+}
