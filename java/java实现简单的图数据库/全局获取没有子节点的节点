@@ -1,0 +1,11 @@
+public List<Long> getNodesWithoutChildren() throws SQLException {
+    List<Long> nodes = getAllNodes();
+    List<Long> leafNodes = new ArrayList<>();
+    for (long node : nodes) {
+        List<Long> descendants = getDescendants(node);
+        if (descendants.isEmpty()) {
+            leafNodes.add(node);
+        }
+    }
+    return leafNodes;
+}
