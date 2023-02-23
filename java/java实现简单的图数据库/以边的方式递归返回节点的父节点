@@ -1,0 +1,23 @@
+public List<Edge> getAllParentEdges(long nodeId) throws SQLException {
+
+    List<Edge> parentEdges = new ArrayList<>();
+
+    Node node = getNode(nodeId);
+
+    long parentId = node.getParentId();
+
+    while (parentId != -1) {
+
+        Node parent = getNode(parentId);
+
+        parentEdges.add(new Edge(parent.getId(), node.getId(), "parent"));
+
+        node = parent;
+
+        parentId = node.getParentId();
+
+    }
+
+    return parentEdges;
+
+}
