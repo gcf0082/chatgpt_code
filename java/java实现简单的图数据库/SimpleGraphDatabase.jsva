@@ -1,0 +1,85 @@
+import java.sql.*;
+
+import java.util.Map;
+
+public class SimpleGraphDatabase {
+
+    private Connection connection;
+
+    public SimpleGraphDatabase(String databaseFilename) throws SQLException {
+
+        this.connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFilename);
+
+    }
+
+    public void createTables() throws SQLException {
+
+        Statement statement = connection.createStatement();
+
+        statement.execute("CREATE TABLE nodes (id INTEGER PRIMARY KEY, label TEXT, properties TEXT)");
+
+        statement.execute("CREATE TABLE edges (id INTEGER PRIMARY KEY, from_node INTEGER, to_node INTEGER, label TEXT, properties TEXT, FOREIGN KEY (from_node) REFERENCES nodes(id), FOREIGN KEY (to_node) REFERENCES nodes(id))");
+
+        statement.close();
+
+    }
+
+    public void addNode(String label, Map<String, Object> properties) throws SQLException {
+
+        String props = properties.toString();
+
+        String sql = String.format("INSERT INTO nodes (label, properties) VALUES ('%s', '%s')", label, props);
+
+        Statement statement = connection.createStatement();
+
+        statement.execute(sql);
+
+        statement.close();
+
+    }
+
+    public void deleteNode(int nodeId) throws SQLException {
+
+        String sql = String.format("DELETE FROM nodes WHERE id=%d", nodeId);
+
+        Statement statement = connection.createStatement();
+
+        statement.execute(sql);
+
+        statement.close();
+
+    }
+
+    public void addEdge(int fromNodeId, int toNodeId, String label, Map<String, Object> properties) throws SQLException {
+
+        String props = properties.toString();
+
+        String sql = String.format("INSERT INTO edges (from_node, to_node, label, properties) VALUES (%d, %d, '%s', '%s')", fromNodeId, toNodeId, label, props);
+
+        Statement statement = connection.createStatement();
+
+        statement.execute(sql);
+
+        statement.close();
+
+    }
+
+    public void deleteEdge(int edgeId) throws SQLException {
+
+        String sql = String.format("DELETE FROM edges WHERE id=%d", edgeId);
+
+        Statement statement = connection.createStatement();
+
+        statement.execute(sql);
+
+        statement.close();
+
+    }
+
+    public void close() throws SQLException {
+
+        connection.close();
+
+    }
+
+}
