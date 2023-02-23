@@ -1,96 +1,126 @@
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
 import java.util.*;
 import java.util.regex.*;
-import org.json.*;
 
 public class IndexSearcher {
-    private Map<String, Map<String, List<Integer>>> index;
-    private String indexPath;
-    
-    public IndexSearcher(String indexPath) {
-        this.index = new HashMap<>();
-        this.indexPath = indexPath;
+    private Map<String, List<Integer>> index; // 索引
+    private String indexFile; // 索引文件路径
+
+    public IndexSearcher(String indexFile) {
+        index = new HashMap<String, List<Integer>>();
+        this.indexFile = indexFile;
     }
-    
-    public void buildIndex(String directory) throws IOException {
-        // 读取目录中的所有文件
-        Path dirPath = Paths.get(directory);
-        List<Path> files = new ArrayList<>();
-        Files.walk(dirPath).forEach(path -> {
-            if (Files.isRegularFile(path)) {
-                files.add(path);
-            }
-        });
-        
-        // 对每个文件进行分词并建立索引
-        for (Path file : files) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file.toString()), StandardCharsets.UTF_8));
-            String line;
-            int lineNumber = 0;
-            while ((line = reader.readLine()) != null) {
-                String[] words = line.split("\\W+");
-                for (String word : words) {
-                    word = word.toLowerCase();
-                    if (!index.containsKey(word)) {
-                        index.put(word, new HashMap<>());
-                    }
-                    if (!index.get(word).containsKey(file.toString())) {
-                        index.get(word).put(file.toString(), new ArrayList<>());
-                    }
-                    index.get(word).get(file.toString()).add(lineNumber);
-                }
-                lineNumber++;
-            }
-            reader.close();
+
+    // 构建索引
+    public void buildIndex(String directory) {
+        File dir = new File(directory);
+        if (!dir.isDirectory()) {
+            System.err.println("Error: " + directory + " is not a directory.");
+            return;
         }
-    }
-    
-    public void saveIndex() throws IOException {
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(indexPath));
-        out.writeObject(index);
-        out.close();
-    }
-    
-    @SuppressWarnings("unchecked")
-    public void loadIndex() throws IOException, ClassNotFoundException {
-        ObjectInputStream in = new ObjectInputStream(new FileInputStream(indexPath));
-        index = (Map<String, Map<String, List<Integer>>>) in.readObject();
-        in.close();
-    }
-    
-    public List<JSONObject> search(String[] keywords, String regex) {
-        List<JSONObject> results = new ArrayList<>();
-        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        for (String keyword : keywords) {
-            if (index.containsKey(keyword)) {
-                Map<String, List<Integer>> fileMap = index.get(keyword);
-                for (String fileName : fileMap.keySet()) {
-                    try {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), StandardCharsets.UTF_8));
-                        String line;
-                        int lineNumber = 0;
-                        while ((line = reader.readLine()) != null) {
-                            Matcher matcher = pattern.matcher(line);
-                            if (matcher.find()) {
-                                JSONObject result = new JSONObject();
-                                result.put("regex", regex);
-                                result.put("match_text", matcher.group());
-                                result.put("line", line);
-                                result.put("line_number", lineNumber);
-                                result.put("file_name", fileName);
-                                results.add(result);
+
+        int fileCount = 0;
+        for (File file : dir.listFiles()) {
+            if (file.isFile()) {
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader(file));
+                    String line;
+                    int lineNumber = 0;
+                    while ((line = reader.readLine()) != null) {
+                        lineNumber++;
+                        String[] words = line.split("\\s+");
+                        for (String word : words) {
+                            word = word.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+                            if (!word.isEmpty()) {
+                                if (!index.containsKey(word)) {
+                                    index.put(word, new ArrayList<Integer>());
+                                }
+                                index.get(word).add(fileCount * 1000 + lineNumber);
                             }
-                            lineNumber++;
                         }
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
+                    reader.close();
+                    fileCount++;
+                } catch (IOException e) {
+                    System.err.println("Error reading " + file.getAbsolutePath() + ": " + e.getMessage());
                 }
             }
         }
-        return results;
+
+        System.out.println("Built index for " + fileCount + " files.");
     }
+
+    // 保存索引到文件
+    public void saveIndex() {
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(indexFile));
+            oos.writeObject(index);
+            oos.close();
+            System.out.println("Index saved to " + indexFile);
+        } catch (IOException e) {
+            System.err.println("Error saving index to " + indexFile + ": " + e.getMessage());
+        }
+    }
+
+    // 加载索引文件
+    public void loadIndex() {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(indexFile));
+            index = (Map<String, List<Integer>>) ois.readObject();
+            ois.close();
+            System.out.println("Index loaded from " + indexFile);
+        } catch (IOException e) {
+            System.err.println("Error loading index from " + indexFile + ": " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error loading index from " + indexFile + ": " + e.getMessage());
+        }
+    }
+
+    // 搜索正则表达式
+    public void search(String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher;
+        for (String word : index.keySet()) {
+            matcher = pattern.matcher(word);
+            if (matcher.find()) {
+                System.out.println(word + ": " + index.get(word));
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        if (args.length < 2) {
+            System.err.println("Usage: java IndexSearcher <command> <directory or index file> [regex]");
+            System.err.println("  Commands:");
+            System.err.println("    build <directory>");
+            System.err.println("    save");
+            System.err.println("    load");
+            System.err.println("    search <regex>");
+            return;
+        }
+
+       
+    String command = args[0];
+    String arg = args[1];
+
+    IndexSearcher searcher = new IndexSearcher("index.dat");
+    if (command.equals("build")) {
+        searcher.buildIndex(arg);
+        searcher.saveIndex();
+    } else if (command.equals("save")) {
+        searcher.saveIndex();
+    } else if (command.equals("load")) {
+        searcher.loadIndex();
+    } else if (command.equals("search")) {
+        if (args.length < 3) {
+            System.err.println("Error: missing regex.");
+            return;
+        }
+        String regex = args[2];
+        searcher.loadIndex();
+        searcher.search(regex);
+    } else {
+        System.err.println("Error: invalid command.");
+    }
+}
 }
