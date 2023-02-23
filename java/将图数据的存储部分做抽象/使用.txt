@@ -1,0 +1,13 @@
+GraphStorage memoryGraphStorage = new MemoryGraphStorage();
+
+Graph graph1 = new Graph(memoryGraphStorage);
+
+// TODO: 添加节点和边，调用 Graph 对象的方法
+
+String url = "jdbc:sqlite:/path/to/database.db";
+
+GraphStorage sqliteGraphStorage = new SQLiteGraphStorage(url);
+
+Graph graph2 = new Graph(sqliteGraphStorage);
+
+// TODO: 添加节点和边，调用 Graph 对象的方法
