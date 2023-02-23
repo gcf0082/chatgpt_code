@@ -1,0 +1,36 @@
+public static void main(String[] args) {
+    Graph graph = new Graph();
+
+    // 创建节点
+    Node alice = graph.createNode("Person");
+    alice.setProperty("name", "Alice");
+    alice.setProperty("age", 25);
+
+    Node bob = graph.createNode("Person");
+    bob.setProperty("name", "Bob");
+    bob.setProperty("age",30);
+    // 创建边
+Edge knows = graph.createEdge("KNOWS", alice, bob);
+knows.setProperty("since", "2022-01-01");
+
+// 获取节点和边
+List<Node> persons = graph.getNodesByLabel("Person");
+List<Edge> knowsEdges = graph.getEdgesByLabel("KNOWS");
+List<Edge> aliceEdges = graph.getEdgesByNode(alice);
+
+// 输出结果
+System.out.println("Persons:");
+for (Node person : persons) {
+    System.out.println(person.getProperty("name") + ", " + person.getProperty("age"));
+}
+
+System.out.println("\nKnows edges:");
+for (Edge edge : knowsEdges) {
+    System.out.println(edge.getFrom().getProperty("name") + " knows " + edge.getTo().getProperty("name") + " since " + edge.getProperty("since"));
+}
+
+System.out.println("\nAlice edges:");
+for (Edge edge : aliceEdges) {
+    System.out.println(edge.getFrom().getProperty("name") + " " + edge.getLabel() + " " + edge.getTo().getProperty("name"));
+}
+}
