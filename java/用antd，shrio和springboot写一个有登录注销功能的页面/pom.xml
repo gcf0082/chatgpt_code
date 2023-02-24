@@ -1,0 +1,19 @@
+<!-- Spring Boot -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+
+<!-- Shiro -->
+<dependency>
+    <groupId>org.apache.shiro</groupId>
+    <artifactId>shiro-spring-boot-web-starter</artifactId>
+    <version>1.8.0</version>
+</dependency>
+
+<!-- Ant Design -->
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>ant-design-vue</artifactId>
+    <version>2.2.0</version>
+</dependency>
