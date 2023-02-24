@@ -1,0 +1,11 @@
+{
+  "name": "My Extension",
+  "version": "1.0",
+  "manifest_version": 2,
+  "permissions": ["webRequest", "webRequestBlocking", "<all_urls>"],
+  "options_page": "options.html",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  }
+}
