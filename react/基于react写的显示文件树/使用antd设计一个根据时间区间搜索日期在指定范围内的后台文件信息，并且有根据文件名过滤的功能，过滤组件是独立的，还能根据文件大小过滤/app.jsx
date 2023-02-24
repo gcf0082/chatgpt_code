@@ -111,4 +111,7 @@ const App = () => {
           搜索
         </Button>
       </div>
-      <Table columns={columns} dataSource={filtered
+      <Table columns={columns} dataSource={filteredData} />
+</>
+);
+};
