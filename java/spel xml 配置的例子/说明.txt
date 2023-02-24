@@ -1,0 +1,3 @@
+这个示例中，我们使用了Spring的ApplicationContext来加载XML配置文件“application-context.xml”。XML文件中定义了一个Map对象“variables”，其中包含了一个名为“input”的键值对，值为“Hello, World!”。我们还定义了一个SpelExpressionParser和一个SpelExpression对象。在SpelExpression对象的构造函数中，我们将variables和SpEL表达式传递给它。
+
+SpEL表达式“#input.toUpperCase()”表示将变量“input”中的字符串转换为大写字母。我们使用getValue()方法在Spring上下文中评估表达式，并将“Hello, SpEL!”作为变量传递。输出结果是“HELLO, SPEL!”，即原始字符串的大写形式。
