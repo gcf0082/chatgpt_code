@@ -1,0 +1,43 @@
+{
+
+  "manifest_version": 2,
+
+  "name": "HTTP Requests Viewer",
+
+  "description": "Displays a list of sent HTTP requests",
+
+  "version": "1.0",
+
+  "icons": {
+
+    "16": "icons/16.png",
+
+    "32": "icons/32.png",
+
+    "48": "icons/48.png",
+
+    "128": "icons/128.png"
+
+  },
+
+  "browser_action": {
+
+    "default_icon": "icons/48.png",
+
+    "default_title": "HTTP Requests Viewer",
+
+    "default_popup": "popup.html"
+
+  },
+
+  "background": {
+
+    "scripts": ["background.js"],
+
+    "persistent": false
+
+  },
+
+  "permissions": ["webRequest", "webRequestBlocking", "storage", "<all_urls>"]
+
+}
