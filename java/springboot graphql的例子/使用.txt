@@ -1,0 +1,40 @@
+查询所有书籍：
+query {
+    books {
+        id
+        title
+        author
+    }
+}
+
+查询指定 ID 的书籍：
+query {
+    book(id: "1") {
+        id
+        title
+        author
+    }
+}
+
+创建一本新书：
+mutation {
+    createBook(title: "Book D", author: "Author D") {
+        id
+        title
+        author
+    }
+}
+
+更新一本书籍：
+mutation {
+    updateBook(id: "1", title: "New Title", author: "New Author") {
+        id
+        title
+        author
+    }
+}
+
+删除一本书籍：
+mutation {
+    deleteBook(id: "1")
+}
