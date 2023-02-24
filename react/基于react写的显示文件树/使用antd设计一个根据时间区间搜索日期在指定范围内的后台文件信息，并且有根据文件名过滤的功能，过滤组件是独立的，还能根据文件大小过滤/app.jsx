@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
-import { DatePicker, Tag, Button, Table, Space } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { DatePicker, Input, Button, Table, Tag } from 'antd';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+import locale from 'antd/lib/date-picker/locale/zh_CN';
+import './App.css';
 
 const { RangePicker } = DatePicker;
 
@@ -8,110 +12,116 @@ const columns = [
     title: '文件名',
     dataIndex: 'name',
     key: 'name',
-    render: text => <a>{text}</a>,
+    render: text => <a href="/">{text}</a>,
   },
   {
-    title: '文件大小',
+    title: '大小',
     dataIndex: 'size',
     key: 'size',
   },
   {
-    title: '上传时间',
-    dataIndex: 'time',
-    key: 'time',
-  },
-  {
-    title: '操作',
-    key: 'action',
-    render: () => (
-      <Space size="middle">
-        <a>查看</a>
-        <a>下载</a>
-      </Space>
-    ),
+    title: '创建时间',
+    dataIndex: 'createTime',
+    key: 'createTime',
   },
 ];
 
 const App = () => {
-  const [filteredData, setFilteredData] = useState([]);
-
-  const handleSearch = async () => {
-    // 获取时间区间和文件名过滤条件
-    const [startTime, endTime] = dateRange;
-    const fileNames = filterText.trim().split(/\s+/);
-
-    // 发送Fetch请求获取文件信息
-    const response = await fetch('/api/files', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ startTime, endTime, fileNames }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      setFilteredData(data);
-    } else {
-      console.error(response.statusText);
-    }
-  };
-
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [filter, setFilter] = useState('');
+
   const handleDateChange = (dates, dateStrings) => {
     setDateRange(dates);
   };
 
-  const [filterText, setFilterText] = useState('');
-  const handleFilterChange = event => {
-    setFilterText(event.target.value);
+  const handleTagClose = removedTag => {
+    const newTags = tags.filter(tag => tag !== removedTag);
+    setTags(newTags);
+    if (newTags.length === 0) {
+      handleSearch();
+    }
   };
 
-  const [fileNames, setFileNames] = useState([]);
-  const handleTagClose = removedTag => {
-    const remainingTags = fileNames.filter(tag => tag !== removedTag);
-    setFileNames(remainingTags);
+  const handleTagInputChange = e => {
+    setFilter(e.target.value);
   };
-  const handleTagInputConfirm = inputValue => {
-    if (inputValue && !fileNames.includes(inputValue)) {
-      setFileNames([...fileNames, inputValue]);
-    }
-    setFilterText('');
+
+  const handleTagInputConfirm = () => {
+    const newTags = [...tags, filter.trim()];
+    setTags(newTags);
+    setFilter('');
+    handleSearch();
   };
+
+  const handleSearch = () => {
+    setLoading(true);
+    fetch('/api/files', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        dateRange,
+        tags,
+      }),
+    })
+      .then(response => response.json())
+      .then(data => setData(data))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, []);
 
   return (
     <>
-      <div style={{ marginBottom: 16 }}>
-        <RangePicker onChange={handleDateChange} />
-        <Tag
-          closable
-          onClose={handleTagClose}
-          onInputKeyDown={event => {
-            if (event.keyCode === 13) {
-              handleTagInputConfirm(event.target.value);
-            }
+      <div className="search-bar">
+        <RangePicker
+          locale={locale}
+          ranges={{
+            Today: [moment(), moment()],
+            'This Week': [moment().startOf('week'), moment().endOf('week')],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
           }}
-          style={{ margin: '0 16px' }}
-        >
-          {fileNames.map(tag => (
+          showTime
+          format="YYYY-MM-DD HH:mm:ss"
+          onChange={handleDateChange}
+        />
+        <div className="tag-filter">
+          {tags.map(tag => (
             <Tag key={tag} closable onClose={() => handleTagClose(tag)}>
               {tag}
             </Tag>
           ))}
           <Input
             type="text"
-            value={filterText}
-            onChange={handleFilterChange}
-            onPressEnter={event => {
-              event.preventDefault();
-              handleTagInputConfirm(event.target.value);
-            }}
-            style={{ width: 78 }}
+            placeholder="输入文件名进行过滤"
+            value={filter}
+            onChange={handleTagInputChange}
+            onPressEnter={handleTagInputConfirm}
+            style={{ width: 200 }}
           />
-        </Tag>
+          <Button type="primary" onClick={handleTagInputConfirm}>
+            添加
+          </Button>
+        </div>
         <Button type="primary" onClick={handleSearch}>
           搜索
         </Button>
       </div>
-      <Table columns={columns} dataSource={filteredData} />
+      <Table
+       
+dataSource={data}
+columns={columns}
+loading={loading}
+rowKey="id"
+/>
 </>
 );
 };
+
+export default App;
