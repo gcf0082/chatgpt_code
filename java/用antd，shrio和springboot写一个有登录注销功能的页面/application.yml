@@ -1,0 +1,14 @@
+shiro:
+  # 安全策略配置
+  filter-chain-definitions:
+    /logout: anon
+    /**: authc
+
+  # 身份验证器配置
+  authc:
+    login-url: /login
+    success-url: /
+    username-param: username
+    password-param: password
+    failure-url: /login?error=true
+    redirect-after-logout: true
