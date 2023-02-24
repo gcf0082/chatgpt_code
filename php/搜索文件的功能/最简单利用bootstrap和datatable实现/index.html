@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Info Search</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <!-- Datatable CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>File Info Search</h1>
+    <div class="form-group">
+      <label for="filename">Enter filename:</label>
+      <input type="text" class="form-control" id="filename" placeholder="Enter filename">
+    </div>
+    <button type="button" class="btn btn-primary" onclick="search()">Search</button>
+    <hr>
+    <table id="fileinfo" class="table">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>File Path</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <!-- Datatable JS -->
+  <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+  
+  <script>
+    function search() {
+      var filename = $('#filename').val();
+      $.ajax({
+        url: 'filesearch.php',
+        data: {filename: filename},
+        type: 'POST',
+        dataType: 'json',
+        success: function(response) {
+          var table = $('#fileinfo').DataTable();
+          table.clear().draw();
+          $.each(response, function(index, file) {
+            table.row.add([file.name, file.path]).draw();
+          });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log(textStatus, errorThrown);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
