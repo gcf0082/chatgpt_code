@@ -1,0 +1,10 @@
+curl -X POST \
+  http://localhost:8080/codeinfo \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "code": "public class MyClass { private int myField; }",
+    "query": "@members[type=FieldDeclaration]@[name=myField]"
+}'
+
+响应
+["private int myField;"]
