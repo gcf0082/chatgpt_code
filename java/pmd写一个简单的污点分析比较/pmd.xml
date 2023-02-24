@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<ruleset name="Taint Analysis Rules"
+
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+
+    http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+
+    <description>Taint Analysis Rules</description>
+
+    <rule name="Tainted String Variable" language="java" 
+
+          message="The string variable is potentially tainted." 
+
+          class="com.example.TaintAnalysisRule">
+
+        <description>Detects potential taint in string variables.</description>
+
+        <priority>1</priority>
+
+    </rule>
+
+</ruleset>
