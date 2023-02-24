@@ -1,0 +1,13 @@
+
+写一个chrome插件，可以拦截http请求增加一个请求头
+
+要编写一个Chrome插件，可以拦截HTTP请求并添加一个请求头，您需要遵循以下步骤：
+
+创建一个新的Chrome扩展程序。这可以通过从Chrome菜单中选择“更多工具”>“扩展程序”，然后单击“新建扩展程序”来完成。
+
+在扩展程序目录中，创建一个新的JavaScript文件，例如“background.js”。这将是您的扩展程序的核心文件。
+
+在“manifest.json”文件中添加一个“permissions”字段，该字段将授权您的扩展程序访问Chrome的网络请求。
+在“manifest.json”文件中添加一个“background”字段，该字段将告诉Chrome要运行哪个JavaScript文件
+在“background.js”文件中添加以下代码，该代码将使用Chrome的webRequest API拦截HTTP请求，并添加一个自定义请求头。
+保存您的扩展程序，并将其安装到Chrome中
