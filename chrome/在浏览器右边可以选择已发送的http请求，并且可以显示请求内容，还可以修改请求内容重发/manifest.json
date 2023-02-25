@@ -1,0 +1,28 @@
+{
+  "name": "HTTP Request Viewer",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "A simple extension to view and modify HTTP requests",
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "http://*/*",
+    "https://*/*",
+    "tabs",
+    "storage"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_icon": "icon-48.png",
+    "default_title": "HTTP Request Viewer",
+    "default_popup": "popup.html"
+  }
+}
