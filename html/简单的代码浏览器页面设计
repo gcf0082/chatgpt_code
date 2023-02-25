@@ -7,152 +7,178 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/theme/monokai.min.css" />
+
+	<style>
+		.dropdown-container {
+		  position: fixed;
+		  right: 100px;
+		  top: 0;
+		  margin: 20px;
+		}
+	  </style>
+
 </head>
+
 <body>
 	<div class="container-fluid">
 		<div class="row">
-		
-		
-		
 			<!-- 左侧选项卡 -->
 			<div class="col-md-3 d-flex">
 				<ul class="nav nav-tabs flex-column  w-25" role="tablist">
-					<li role="presentation" class="active"><a href="#file-tree" aria-controls="file-tree" role="tab" data-toggle="tab">File Tree</a></li>
-					<li role="presentation"><a href="#code-editor" ariacontrols="code-editor" role="tab" data-toggle="tab">Code Editor</a></li>
-</ul>
-<div class="tab-content">
-<!-- 文件树浏览选项卡 -->
-<div role="tabpanel" class="tab-pane active" id="file-tree">
-<div id="file-tree-container"></div>
-</div>
-<!-- 代码文件选项卡 -->
-<div role="tabpanel" class="tab-pane" id="code-editor">
-<div id="code-editor-container"></div>
-</div>
-</div>
-</div>
-<!-- 右侧代码视图 -->
-<div class="col-md-9">
-<!-- 顶部菜单栏 -->
-<nav class="navbar navbar-default">
-<div class="container-fluid">
-<div class="navbar-header">
-<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
-<span class="sr-only">Toggle navigation</span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-</button>
-<a class="navbar-brand" href="#">Code Browser</a>
-</div>
-<div class="collapse navbar-collapse" id="navbar-collapse">
-<ul class="nav navbar-nav">
-<li><a href="#" id="new-file-btn">New File</a></li>
-<li><a href="#" id="open-file-btn">Open File</a></li>
-<li><a href="#" id="save-file-btn">Save File</a></li>
-<li><a href="#" id="refresh-btn">Refresh</a></li>
-</ul>
-</div>
-</div>
-</nav>
-<!-- 代码编辑器 -->
-<textarea id="code-editor-textarea"></textarea>
-</div>
-</div>
-</div>
-<!-- 引入 Bootstrap 和其他库的 JavaScript 文件 -->
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js"></script>
-<script>
-$(document).ready(function() {
-// 初始化文件树浏览选项卡
-$('#file-tree-container').jstree({
-'core': {
-'data': {
-"url": "filetree.json",
-"dataType": "json"
-}
-},
-"plugins" : [ "wholerow" ]
-});
-		// 初始化代码编辑器
-		var editor = CodeMirror.fromTextArea(document.getElementById("code-editor-textarea"), {
-			lineNumbers: true,
-			mode: "javascript",
-			theme: "monokai",
-			matchBrackets: true,
-			autoCloseBrackets: true,
-			tabSize: 2,
-			indentUnit: 2,
-			indentWithTabs: false
-		});
-
-		// 监听文件树浏览选项卡中文件的点击事件
-$('#file-tree-container').on('select_node.jstree', function(e, data) {
-// 如果选中的是文件节点
-if (data.node.icon == 'glyphicon glyphicon-file') {
-// 发送 AJAX 请求获取文件内容
-$.get(data.node.a_attr.href, function(code) {
-// 在代码编辑器中显示文件内容
-editor.setValue(code);
-});
-}
-});
-		// 监听顶部菜单栏的按钮点击事件
-		$('#new-file-btn').click(function() {
-			// 清空代码编辑器
-			editor.setValue('');
-		});
-
-		$('#open-file-btn').click(function() {
-			// 打开文件选择框
-			$('#file-input').click();
-		});
-
-		$('#save-file-btn').click(function() {
-			// 获取当前编辑器中的代码
-			var code = editor.getValue();
-
-			// 发送 AJAX 请求保存代码
-			$.ajax({
-				url: 'save.php',
-				type: 'POST',
-				data: {
-					'path': $('#file-tree-container').jstree('get_selected')[0],
-					'code': code
+					<li role="presentation" class="active"><a href="#file-tree" aria-controls="file-tree" role="tab"
+							data-toggle="tab">File Tree</a></li>
+					<li role="presentation"><a href="#code-editor" ariacontrols="code-editor" role="tab"
+							data-toggle="tab">Code Editor</a></li>
+				</ul>
+				<div class="tab-content">
+					<!-- 文件树浏览选项卡 -->
+					<div role="tabpanel" class="tab-pane active" id="file-tree">
+						<div id="file-tree-container"></div>
+					</div>
+					<!-- 代码文件选项卡 -->
+					<div role="tabpanel" class="tab-pane" id="code-editor">
+						<div id="code-editor-container"></div>
+					</div>
+				</div>
+			</div>
+			<!-- 右侧代码视图 -->
+			<div class="col-md-9">
+				<!-- 顶部菜单栏 -->
+				<nav class="navbar navbar-default">
+					<div class="container-fluid">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+								data-target="#navbar-collapse">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+							<a class="navbar-brand" href="#">Code Browser</a>
+						</div>
+						<div class="collapse navbar-collapse" id="navbar-collapse">
+							<ul class="nav navbar-nav">
+								<li><a href="#" id="new-file-btn">New File</a></li>
+								<li><a href="#" id="open-file-btn">Open File</a></li>
+								<li><a href="#" id="save-file-btn">Save File</a></li>
+								<li><a href="#" id="refresh-btn">Refresh</a></li>
+							</ul>
+						</div>
+					</div>
+				</nav>
+				<!-- 代码编辑器 -->
+				<textarea id="code-editor-textarea"></textarea>
+			</div>
+		</div>
+		<div class="dropdown-container">
+			<div class="dropdown">
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				<span class="glyphicon glyphicon-bell"></span>
+				<span class="badge">3</span>
+			  </a>
+			  <ul class="dropdown-menu">
+				<li><a href="#">消息 1</a></li>
+				<li><a href="#">消息 2</a></li>
+				<li><a href="#">消息 3</a></li>
+				<li class="divider"></li>
+				<li><a href="#">查看所有消息</a></li>
+			  </ul>
+			</div>
+		  </div>
+	</div>
+	<!-- 引入 Bootstrap 和其他库的 JavaScript 文件 -->
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			// 初始化文件树浏览选项卡
+			$('#file-tree-container').jstree({
+				'core': {
+					'data': {
+						"url": "filetree.json",
+						"dataType": "json"
+					}
 				},
-				success: function() {
-					alert('File saved successfully!');
-				},
-				error: function() {
-					alert('File save failed!');
+				"plugins": ["wholerow"]
+			});
+			// 初始化代码编辑器
+			var editor = CodeMirror.fromTextArea(document.getElementById("code-editor-textarea"), {
+				lineNumbers: true,
+				mode: "javascript",
+				theme: "monokai",
+				matchBrackets: true,
+				autoCloseBrackets: true,
+				tabSize: 2,
+				indentUnit: 2,
+				indentWithTabs: false
+			});
+
+			// 监听文件树浏览选项卡中文件的点击事件
+			$('#file-tree-container').on('select_node.jstree', function (e, data) {
+				// 如果选中的是文件节点
+				if (data.node.icon == 'glyphicon glyphicon-file') {
+					// 发送 AJAX 请求获取文件内容
+					$.get(data.node.a_attr.href, function (code) {
+						// 在代码编辑器中显示文件内容
+						editor.setValue(code);
+					});
 				}
 			});
-		});
+			// 监听顶部菜单栏的按钮点击事件
+			$('#new-file-btn').click(function () {
+				// 清空代码编辑器
+				editor.setValue('');
+			});
 
-		$('#refresh-btn').click(function() {
-			// 刷新文件树浏览选项卡
-			$('#file-tree-container').jstree('refresh');
-		});
+			$('#open-file-btn').click(function () {
+				// 打开文件选择框
+				$('#file-input').click();
+			});
 
-		// 监听文件选择框的选择事件
-		$('#file-input').change(function() {
-			// 获取选中的文件
-			var file = $('#file-input')[0].files[0];
+			$('#save-file-btn').click(function () {
+				// 获取当前编辑器中的代码
+				var code = editor.getValue();
 
-			// 读取文件内容
-			var reader = new FileReader();
-			reader.onload = function(e) {
-				// 在代码编辑器中显示文件内容
-				editor.setValue(e.target.result);
-			};
-			reader.readAsText(file);
+				// 发送 AJAX 请求保存代码
+				$.ajax({
+					url: 'save.php',
+					type: 'POST',
+					data: {
+						'path': $('#file-tree-container').jstree('get_selected')[0],
+						'code': code
+					},
+					success: function () {
+						alert('File saved successfully!');
+					},
+					error: function () {
+						alert('File save failed!');
+					}
+				});
+			});
+
+			$('#refresh-btn').click(function () {
+				// 刷新文件树浏览选项卡
+				$('#file-tree-container').jstree('refresh');
+			});
+
+			// 监听文件选择框的选择事件
+			$('#file-input').change(function () {
+				// 获取选中的文件
+				var file = $('#file-input')[0].files[0];
+
+				// 读取文件内容
+				var reader = new FileReader();
+				reader.onload = function (e) {
+					// 在代码编辑器中显示文件内容
+					editor.setValue(e.target.result);
+				};
+				reader.readAsText(file);
+			});
 		});
-	});
-</script>
+	</script>
 </body>
-</html>
 
+</html>
