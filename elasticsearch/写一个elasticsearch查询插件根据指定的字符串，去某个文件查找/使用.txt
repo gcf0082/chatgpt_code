@@ -1,0 +1,8 @@
+{
+  "query": {
+    "file_search": {
+      "file_path": "/path/to/file",
+      "query_string": "ERROR"
+    }
+  }
+}
