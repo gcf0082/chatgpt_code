@@ -1,0 +1,10 @@
+const query = {
+  query: {
+    match: {
+      title: 'Elasticsearch'
+    }
+  }
+};
+
+const jsonString = JSON.stringify(query);
+console.log(jsonString);
