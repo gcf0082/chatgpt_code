@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Generate Elasticsearch DSL with Mustache.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.2.0/mustache.min.js"></script>
+    <script>
+      function generateDSL() {
+        const query = {
+          term: {
+            name: "John"
+          }
+        };
+        const template = document.getElementById("query-template").innerHTML;
+        const dsl = Mustache.render(template, {
+          queryType: "term",
+          field: "name",
+          value: "John"
+        });
+        console.log(dsl);
+        // 发送DSL查询到Elasticsearch服务器...
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Generate Elasticsearch DSL with Mustache.js</h1>
+    <button onclick="generateDSL()">Generate DSL</button>
+    <script id="query-template" type="x-tmpl-mustache">
+      {
+        "query": {
+          "{{queryType}}": {
+            "{{field}}": "{{value}}"
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
