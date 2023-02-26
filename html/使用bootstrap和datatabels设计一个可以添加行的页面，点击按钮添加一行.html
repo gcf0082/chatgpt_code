@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Add Row using DataTables and Bootstrap</title>
+	<!-- 引入必要的库和样式表 -->
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.11.3/datatables.min.css"/>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"/>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.11.3/datatables.min.js"></script>
+</head>
+<body>
+	<div class="container mt-5">
+		<h2>Add Row using DataTables and Bootstrap</h2>
+		<button id="add-row" class="btn btn-primary mb-3">Add Row</button>
+		<table id="example" class="table table-striped table-bordered" style="width:100%">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Age</th>
+					<th>Email</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>John Doe</td>
+					<td>30</td>
+					<td>john.doe@example.com</td>
+				</tr>
+				<tr>
+					<td>Jane Doe</td>
+					<td>25</td>
+					<td>jane.doe@example.com</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			// 初始化DataTable
+			var table = $('#example').DataTable();
+
+			// 点击添加按钮时，在表格中添加一行
+			$('#add-row').on('click', function() {
+				table.row.add([
+					'<input type="text" class="form-control" placeholder="Enter Name">',
+					'<input type="text" class="form-control" placeholder="Enter Age">',
+					'<input type="email" class="form-control" placeholder="Enter Email">'
+				]).draw();
+			});
+		});
+	</script>
+</body>
+</html>
