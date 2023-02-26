@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Generate Elasticsearch DSL with Handlebars.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <script>
+      function generateDSL() {
+        const queries = [
+          { field: "name", value: "John" },
+          { field: "age", value: 30 }
+        ];
+        const template = document.getElementById("query-template").innerHTML;
+        const dsl = Handlebars.compile(template)({
+          queryType: "term",
+          queries: queries
+        });
+        console.log(dsl);
+        // 发送DSL查询到Elasticsearch服务器...
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Generate Elasticsearch DSL with Handlebars.js</h1>
+    <button onclick="generateDSL()">Generate DSL</button>
+    <script id="query-template" type="text/x-handlebars-template">
+      {
+        "query": {
+          "bool": {
+            "should": [
+              {{#each queries}}
+              {
+                "{{../queryType}}": {
+                  "{{field}}": "{{value}}"
+                }
+              },
+              {{/each}}
+              {
+                "match_all": {}
+              }
+            ]
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
