@@ -1,0 +1,133 @@
+最近5分钟的日志
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now-5m",
+              "lt": "now"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+在指定几个字段中查找匹配的字符串
+{
+  "query": {
+    "multi_match": {
+      "query": "search_text",
+      "fields": ["field1", "field2", "field3"]
+    }
+  }
+}
+
+在几个字段中进行正则查询的dsl
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "regexp": {
+            "field1": "regex_pattern"
+          }
+        },
+        {
+          "regexp": {
+            "field2": "regex_pattern"
+          }
+        },
+        {
+          "regexp": {
+            "field3": "regex_pattern"
+          }
+        }
+      ]
+    }
+  }
+}
+
+某个字段包含xxx字符串或者包含yyy字符串
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "match": {
+            "field": "xxx"
+          }
+        },
+        {
+          "match": {
+            "field": "yyy"
+          }
+        }
+      ]
+    }
+  }
+}
+
+某个字段即包含xxx字符串也包含yyy字符串
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match_phrase": {
+            "field": "xxx"
+          }
+        },
+        {
+          "match_phrase": {
+            "field": "yyy"
+          }
+        }
+      ]
+    }
+  }
+}
+
+在所有字段查询包含xxx字符串，不做分词
+{
+  "query": {
+    "match_phrase": {
+      "_all": {
+        "query": "xxx",
+        "slop": 0
+      }
+    }
+  }
+}
+
+通配符查询，不分词
+{
+  "query": {
+    "wildcard": {
+      "name.keyword": "joh*"
+    }
+  }
+}
+
+查询某个时间点之前的日志
+{
+  "query": {
+    "range": {
+      "timestamp": {
+        "lt": "2022-02-25T10:00:00"
+      }
+    }
+  }
+}
+
+在多个索引查询
+GET /index1,index2,index3/_search
+{
+  "query": {
+    // 查询语句
+  }
+}
