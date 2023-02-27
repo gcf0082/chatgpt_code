@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memo App</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div id="alert"></div>
+
+        <div id="login-form">
+            <h2>Login</h2>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" id="username" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" placeholder="Enter password">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="login()">Submit</button>
+            <button type="button" class="btn btn-link" onclick="showRegForm()">Register</button>
+        </div>
+
+        <div id="reg-form" style="display:none">
+            <h2>Register</h2>
+            <div class="form-group">
+                <label for="reg-username">Username:</label>
+                <input type="text" class="form-control" id="reg-username" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="reg-password">Password:</label>
+                <input type="password" class="form-control" id="reg-password" placeholder="Enter password">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="register()">Submit</button>
+            <button type="button" class="btn btn-link" onclick="showLoginForm()">Login</button>
+        </div>
+
+        <div id="memo-form" style="display:none">
+            <h2>Add Memo</h2>
+            <div class="form-group">
+                <label for="memo-title">Title:</label>
+                <input type="text" class="form-control" id="memo-title" placeholder="Enter title">
+            </div>
+            <div class="form-group">
+                <label for="memo-content">Content:</label>
+                <textarea class="form-control" id="memo-content" rows="3"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="addMemo()">Submit</button>
+            <button type="button" class="btn btn-link" onclick="showMemoList()">Cancel</button>
+        </div>
+
+        <div id="memo-list" style="display:none">
+            <h2>Memo List</h2>
+            <button type="button" class="btn btn-primary" onclick="showMemoForm()">Add Memo</button>
+            <ul id="memo-ul" class="list-group mt-3"></ul>
+        </div>
+
+    </div>
+
+    <script>
+        function showLoginForm() {
+            document.getElementById('alert').innerHTML = '';
+            document.getElementById('reg-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        }
+
+        function showRegForm() {
+            document.getElementById('alert').innerHTML = '';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('reg-form').style.display = 'block';
+        }
+
+                function showMemoForm() {
+            document.getElementById('memo-title').value = '';
+            document.getElementById('memo-content').value = '';
+            document.getElementById('memo-list').style.display = 'none';
+            document.getElementById('memo-form').style.display = 'block';
+        }
+
+        function showMemoList() {
+            document.getElementById('memo-ul').innerHTML = '';
+            document.getElementById('memo-form').style.display = 'none';
+            document.getElementById('memo-list').style.display = 'block';
+            fetch('/memos', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(memo => {
+                    let li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.appendChild(document.createTextNode(memo.title));
+                    document.getElementById('memo-ul').appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function addMemo() {
+            let title = document.getElementById('memo-title').value;
+            let content = document.getElementById('memo-content').value;
+            if (title && content) {
+                fetch('/memos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    body: JSON.stringify({title: title, content: content})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showMemoList();
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert('Please enter both title and content.');
+            }
+        }
+
+        function login() {
+            let username = document.getElementById('username').value;
+            let password = document.getElementById('password').value;
+            if (username && password) {
+                fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({username: username, password: password})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem('token', data.access_token);
+                    showMemoList();
+                })
+                .catch(error => {
+                    document.getElementById('alert').innerHTML = '<div class="alert alert-danger">Invalid username or password.</div>';
+                });
+            } else {
+                alert('Please enter both username and password.');
+            }
+        }
+
+        function register() {
+            let username = document.getElementById('reg-username').value;
+            let password = document.getElementById('reg-password').value;
+            if (username && password) {
+                fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({username: username, password: password})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem('token', data.access_token);
+                    showMemoList();
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert('Please enter both username and password.');
+            }
+        }
+    </script>
+
+</body>
+</html>
+
