@@ -23,3 +23,13 @@ public class OkHttpUtils {
         return sendJsonPost(url, json);
     }
 }
+
+/*
+String ip = "127.0.0.1";
+int port = 8080;
+String json = "{\"key\": \"value\"}";
+
+String response = OkHttpUtils.sendJsonPost(ip, port, json);
+System.out.println(response);
+
+*/
