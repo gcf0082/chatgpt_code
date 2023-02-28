@@ -1,0 +1,10 @@
+from datetime import datetime, timezone
+
+# 获取当前UTC时间
+now_utc = datetime.now(timezone.utc)
+
+# 将时间格式化为字符串
+utc_string = now_utc.strftime('%Y-%m-%d %H:%M:%S.%f %Z')
+
+# 打印字符串
+print(utc_string)
