@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Datatables Column Width Example</title>
+    <!-- 引入必要的库文件 -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.css"/>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/colreorder/1.5.4/js/dataTables.colReorder.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/colreorder/1.5.4/css/dataTables.colReorder.min.css"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <!-- 初始化Datatables -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#example').DataTable( {
+                "scrollX": true, // 开启水平滚动条
+                "columnDefs": [
+                    { "width": "20%", "targets": 0 },
+                    { "width": "40%", "targets": [1,2] },
+                    { "sortable": false, "targets": [0,1] } // 禁止第一列和第二列排序
+                ],
+                "dom": 'R<"datatable-header">rt<"datatable-footer"lp>', // 设置自定义布局
+                "colReorder": true, // 开启列重排功能
+                "colResize": {
+                    "liveDrag": true // 开启动态拖动调整列宽度功能
+                }
+            } );
+        } );
+    </script>
+    <!-- 自定义CSS样式 -->
+    <style>
+        .datatable-header {
+            background-color: #f7f7f7;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            cursor: move;
+        }
+        .datatable-footer {
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 表格HTML -->
+    <table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>描述</th>
+                <th>价格</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>商品A</td>
+                <td>这是商品A的描述</td>
+                <td>$10.00</td>
+            </tr>
+            <tr>
+                <td>商品B</td>
+                <td>这是商品B的描述</td>
+                <td>$15.00</td>
+            </tr>
+            <tr>
+                <td>商品C</td>
+                <td>这是商品C的描述</td>
+                <td>$20.00</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
