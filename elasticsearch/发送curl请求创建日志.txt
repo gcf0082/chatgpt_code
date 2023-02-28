@@ -1,0 +1,1 @@
+curl -XPOST -H "Content-Type: application/json" http://localhost:9200/mylogs/_doc -d '{ "timestamp": "2023-02-28T12:34:56Z", "message": "This is a log message", "level": "INFO", "source": "myapp" }'
