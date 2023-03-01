@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>jQuery Query Builder with Elasticsearch</title>
+  <link href="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.default.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.dark.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="builder"></div>
+  <button id="generate">Generate DSL</button>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/js/query-builder.standalone.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#builder').queryBuilder({
+        filters: [{
+            id: 'title',
+            label: 'Title',
+            type: 'string',
+            operators: ['equal', 'not_equal', 'begins_with', 'contains', 'not_contains', 'ends_with']
+          },
+          {
+            id: 'author',
+            label: 'Author',
+            type: 'string',
+            operators: ['equal', 'not_equal', 'begins_with', 'contains', 'not_contains', 'ends_with']
+          },
+          {
+            id: 'year',
+            label: 'Year',
+            type: 'integer',
+            input: 'text',
+            operators: ['equal', 'not_equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal']
+          },
+          {
+            id: 'rating',
+            label: 'Rating',
+            type: 'integer',
+            input: 'select',
+            values: {
+              1: '1 star',
+              2: '2 stars',
+              3: '3 stars',
+              4: '4 stars',
+              5: '5 stars'
+            },
+            operators: ['equal', 'not_equal', 'in', 'not_in']
+          }
+        ]
+      });
+
+      $('#generate').on('click', function() {
+        var rules = $('#builder').queryBuilder('getRules');
+        var dsl = {
+          query: {
+            bool: {
+              must: []
+            }
+          }
+        };
+
+        $.each(rules.rules, function(i, rule) {
+          var field = rule.field;
+          var value = rule.value;
+          var condition = rule.operator.toLowerCase();
+
+          var subDsl = {
+            bool: {}
+          };
+
+          switch (condition) {
+            case 'equal':
+              subDsl.bool[condition.toLowerCase()] = [{
+                match: {
+                  [field]: value
+                }
+              }];
+              break;
+            case 'not_equal':
+              subDsl.bool[condition.toLowerCase()] = [{
+                bool: {
+                  must_not: [{
+                    match: {
+                      [field]: value
+                    }
+                  }]
+                }
+              }];
+              break;
+            case 'less':
+              subDsl.bool[condition.toLowerCase()] = [{
+                range: {
+                  [field]: {
+                    lt: value
+                  }
+                }
+              }];
+              break;
+            case 'less_or_equal':
+              subDsl.bool[condition.toLowerCase()] = [{
+                range: {
+                  [field]: {
+                    lte: value
+                  }
+                }
+              }];
+              break;
+            case 'greater':
+              subDsl.bool[condition.toLowerCase()] = [{
+                range: {
+                  [field]: {
+                    gt: value
+                  }
+                }
+              }];
+              break;
+            case 'greater_or_equal':
+              subDsl.bool[condition.toLowerCase()] = [{
+          range: {
+              [field]: {
+                gte: value
+              }
+            }
+          }];
+          break;
+        case 'begins_with':
+          subDsl.bool.must = [{
+            prefix: {
+              [field]: value
+            }
+          }];
+          break;
+        case 'contains':
+          subDsl.bool.must = [{
+            match: {
+              [field]: {
+                query: value,
+                operator: 'and'
+              }
+            }
+          }];
+          break;
+        case 'not_contains':
+          subDsl.bool.must_not = [{
+            match: {
+              [field]: {
+                query: value,
+                operator: 'and'
+              }
+            }
+          }];
+          break;
+        case 'ends_with':
+          subDsl.bool.must = [{
+            wildcard: {
+              [field]: `*${value}`
+            }
+          }];
+          break;
+        case 'in':
+          subDsl.bool[condition.toLowerCase()] = [{
+            terms: {
+              [field]: value.split(',')
+            }
+          }];
+          break;
+        case 'not_in':
+          subDsl.bool[condition.toLowerCase()] = [{
+            bool: {
+              must_not: [{
+                terms: {
+                  [field]: value.split(',')
+                }
+              }]
+            }
+          }];
+          break;
+        default:
+          break;
+      }
+
+      dsl.query.bool.must.push(subDsl);
+    });
+
+    console.log(JSON.stringify(dsl, null, 2));
+  });
+});
+</script>
+</body>
+</html>
