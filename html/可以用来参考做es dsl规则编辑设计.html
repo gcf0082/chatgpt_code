@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>DSL规则引擎</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">DSL规则引擎</h1>
+      <hr>
+      <form>
+        <div class="form-group row">
+          <label for="rule-template" class="col-sm-2 col-form-label">规则模板</label>
+          <div class="col-sm-10">
+            <select class="form-control" id="rule-template">
+              <option value="match" selected>匹配查询</option>
+              <option value="term">精确查询</option>
+              <option value="range">范围查询</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="field-name" class="col-sm-2 col-form-label">字段名</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="field-name" required>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="field-value" class="col-sm-2 col-form-label">字段值</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="field-value" required>
+          </div>
+        </div>
+        <div class="form-group row" id="range-params" style="display:none">
+          <label for="field-min" class="col-sm-2 col-form-label">最小值</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" id="field-min" required>
+          </div>
+          <label for="field-max" class="col-sm-2 col-form-label">最大值</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" id="field-max" required>
+          </div>
+        </div>
+        <hr>
+        <div id="rules">
+          <h3>规则</h3>
+          <div class="form-row mb-2" id="rule-template-row">
+            <div class="col">
+              <select class="form-control rule-template-select" required>
+                <option value="match" selected>匹配查询</option>
+                <option value="term">精确查询</option>
+                <option value="range">范围查询</option>
+              </select>
+            </div>
+           
+<div class="col">
+              <input type="text" class="form-control field-name-input" placeholder="字段名" required>
+            </div>
+            <div class="col">
+              <input type="text" class="form-control field-value-input" placeholder="字段值" required>
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn btn-danger delete-rule-btn">删除</button>
+            </div>
+			  <div class="col-auto">
+              <button id="add-rule-btn" type="button" class="btn btn-danger ">添加</button>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="form-group row">
+          <label for="rule-combine" class="col-sm-2 col-form-label">规则组合方式</label>
+          <div class="col-sm-10">
+            <select class="form-control" id="rule-combine">
+              <option value="or" selected>或</option>
+              <option value="and">与</option>
+            </select>
+          </div>
+        </div>
+        <hr>
+        <button type="submit" class="btn btn-primary">生成DSL规则</button>
+      </form>
+      <hr>
+      <h3>DSL规则</h3>
+      <pre id="dsl"></pre>
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+      $(function() {
+        // 显示或隐藏范围查询参数
+        $("#rule-template").change(function() {
+          if ($(this).val() === "range") {
+            $("#range-params").show();
+          } else {
+            $("#range-params").hide();
+          }
+        });
+		    // 添加规则
+    $("#add-rule-btn").click(function() {
+      var $ruleTemplateSelect = $("<select>")
+        .addClass("form-control rule-template-select")
+        .append($("<option>").val("match").text("匹配查询"))
+        .append($("<option>").val("term").text("精确查询"))
+        .append($("<option>").val("range").text("范围查询"));
+      var $fieldNameInput = $("<input>")
+        .addClass("form-control field-name-input")
+        .attr("type", "text")
+        .attr("placeholder", "字段名")
+        .prop("required", true);
+      var $fieldValueInput = $("<input>")
+        .addClass("form-control field-value-input")
+        .attr("type", "text")
+        .attr("placeholder", "字段值")
+        .prop("required", true);
+      var $deleteRuleBtn = $("<button>")
+        .addClass("btn btn-danger delete-rule-btn")
+        .attr("type", "button")
+        .text("删除");
+      var $ruleRow = $("<div>")
+        .addClass("form-row mb-2")
+        .append($("<div>").addClass("col").append($ruleTemplateSelect))
+        .append($("<div>").addClass("col").append($fieldNameInput))
+        .append($("<div>").addClass("col").append($fieldValueInput))
+        .append($("<div>").addClass("col-auto").append($deleteRuleBtn));
+      $("#rules").append($ruleRow);
+    });
+
+    // 删除规则
+    $(document).on("click", ".delete-rule-btn", function() {
+      $(this).closest(".form-row").remove();
+    });
+
+    // 生成DSL规则
+    $("form").submit(function(event) {
+      event.preventDefault();
+      var rules = [];
+      $(".form-row").each(function() {
+var $ruleRow = $(this);
+var ruleTemplate = $ruleRow.find(".rule-template-select").val();
+var fieldName = $ruleRow.find(".field-name-input").val();
+var fieldValue = $ruleRow.find(".field-value-input").val();
+var rule = {};
+switch (ruleTemplate) {
+case "match":
+rule.match = {};
+rule.match[fieldName] = fieldValue;
+break;
+case "term":
+rule.term = {};
+rule.term[fieldName] = fieldValue;
+break;
+case "range":
+var fromValue = $ruleRow.find(".from-value-input").val();
+var toValue = $ruleRow.find(".to-value-input").val();
+rule.range = {};
+rule.range[fieldName] = {
+gte: fromValue,
+lte: toValue
+};
+break;
+default:
+break;
+}
+rules.push(rule);
+});
+var dsl = {
+bool: {}
+};
+var ruleCombine = $("#rule-combine").val();
+if (rules.length > 1) {
+dsl.bool[ruleCombine] = rules;
+} else if (rules.length === 1) {
+dsl.bool.must = rules;
+} else {
+dsl.match_all = {};
+}
+$("#dsl").text(JSON.stringify(dsl, null, 2));
+});
+});
+</script>
+
+  </body>
+</html>
