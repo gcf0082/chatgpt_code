@@ -1,0 +1,556 @@
+1. 定义变量：
+```
+variable_name="value"
+```
+2. 条件语句：
+```
+if [ condition ]
+then
+    commands
+fi
+```
+3. 循环语句：
+```
+for variable_name in list
+do
+    commands
+done
+```
+4. 函数定义：
+```
+function_name() {
+    commands
+}
+```
+5. 数组定义：
+```
+array_name=(element1 element2 ... elementN)
+```
+6. 数组遍历：
+```
+for element in "${array_name[@]}"
+do
+    commands
+done
+```
+7. 文件读取：
+```
+while read line
+do
+    commands
+done < file.txt
+```
+8. 字符串替换：
+```
+new_string="${old_string/substring/replacement}"
+```
+9. 字符串截取：
+```
+substring="${string:position:length}"
+```
+10. 获取命令输出：
+```
+output=$(command)
+```
+11. 判断文件是否存在：
+```
+if [ -f path/to/file ]
+then
+    commands
+fi
+```
+12. 判断目录是否存在：
+```
+if [ -d path/to/directory ]
+then
+    commands
+fi
+```
+13. 判断变量是否为空：
+```
+if [ -z "$variable_name" ]
+then
+    commands
+fi
+```
+14. 输出到控制台：
+```
+echo "message"
+```
+15. 输出到文件：
+```
+echo "message" > path/to/file
+```
+16. 获取当前脚本的文件名：
+```
+script_name=$(basename "$0")
+```
+17. 获取当前脚本的目录：
+```
+script_directory=$(dirname "$0")
+```
+18. 判断用户是否有root权限：
+```
+if [ "$(id -u)" != "0" ]; then
+    echo "This script must be run as root"
+    exit 1
+fi
+```
+19. 获取当前时间戳：
+```
+current_timestamp=$(date +%!s(MISSING))
+```
+20. 使用正则表达式匹配字符串：
+```
+if [[ "$string" =~ regex_pattern ]]
+then
+    commands
+fi
+```
+21. 判断命令是否存在：
+```
+if command -v command_name >/dev/null 2>&1
+then
+    commands
+fi
+```
+22. 将输出重定向到/dev/null：
+```
+command > /dev/null 2>&1
+```
+23. 执行命令并检查返回值：
+```
+if ! command
+then
+    echo "Error: command failed"
+    exit 1
+fi
+```
+24. 生成随机数：
+```
+random_number=$((RANDOM %!m(MISSING)ax_number + 1))
+```
+25. 将字符串转换为小写：
+```
+lowercase_string=$(echo "$string" | tr '[:upper:]' '[:lower:]')
+```
+26. 将字符串转换为大写：
+```
+uppercase_string=$(echo "$string" | tr '[:lower:]' '[:upper:]')
+```
+27. 将字符串反转：
+```
+reversed_string=$(echo "$string" | rev)
+```
+28. 获取命令行参数：
+```
+while getopts ":a:b:c:" opt; do
+    case $opt in
+        a) arg1="$OPTARG" ;;
+        b) arg2="$OPTARG" ;;
+        c) arg3="$OPTARG" ;;
+        \?) echo "Invalid option: -$OPTARG" >&2 ;;
+        :) echo "Option -$OPTARG requires an argument." >&2 ;;
+    esac
+done
+```
+29. 获取数组长度：
+```
+array_length=${#array_name[@]}
+```
+30. 在数组中查找元素：
+```
+if [[ " ${array_name[@]} " =~ " ${element} " ]]
+then
+    commands
+fi
+```
+31. 计算字符串长度：
+```
+string_length=${#string}
+```
+32. 检查字符串是否以特定子字符串开头：
+```
+if [[ "$string" == "prefix"* ]]
+then
+    commands
+fi
+```
+33. 检查字符串是否以特定子字符串结尾：
+```
+if [[ "$string" == *"suffix" ]]
+then
+    commands
+fi
+```
+34. 获取字符串中第一次出现的子字符串位置：
+```
+substring_position=$(echo "$string" | grep -b -o "$substring" | head -n 1 | cut -d ":" -f 1)
+```
+35. 在字符串中删除特定子字符串：
+```
+new_string="${string//substring/}"
+```
+36. 在字符串中删除特定子字符串（仅第一次出现）：
+```
+new_string="${string/substring/}"
+```
+37. 在字符串中删除特定子字符串（仅最后一次出现）：
+```
+new_string="${string##*substring}"
+```
+38. 在字符串中删除特定子字符串（仅第一个匹配）：
+```
+new_string="${string/substring/}"
+```
+39. 在字符串中删除特定子字符串（仅最后一个匹配）：
+```
+new_string="${string%!s(MISSING)ubstring*}${string##*substring}"
+```
+40. 获取字符串中的子字符串列表：
+```
+substring_list=$(grep -o "$substring" <<< "$string")
+```
+41. 循环执行命令直到成功：
+```
+until command
+do
+    sleep 1
+done
+```
+42. 执行命令并在超时后终止：
+```
+timeout 60 command
+```
+43. 在脚本中引入外部文件：
+```
+source /path/to/file.sh
+```
+44. 创建临时文件：
+```
+temp_file=$(mktemp)
+```
+45. 将输出写入文件：
+```
+command > output_file
+```
+46. 将错误输出写入文件：
+```
+command 2> error_file
+```
+47. 将输出和错误输出写入同一文件：
+```
+command > output_file 2>&1
+```
+48. 在脚本中使用颜色输出：
+```
+red='\033[0;31m'
+green='\033[0;32m'
+yellow='\033[0;33m'
+reset='\033[0m'
+echo -e "${red}Error:${reset} Something went wrong"
+echo -e "${green}Success:${reset} Everything is OK"
+echo -e "${yellow}Warning:${reset} Be careful"
+```
+49. 在脚本中暂停执行：
+```
+sleep 5
+```
+50. 在脚本中等待用户输入：
+```
+read -p "Enter input: " input_variable
+```
+51. 将多行文本存入变量：
+```
+multi_line_text=$(cat <<EOF
+This is a
+multi-line
+text.
+EOF
+)
+```
+52. 使用awk处理文本：
+```
+awk '{print $1}' file.txt
+```
+53. 使用sed处理文本：
+```
+sed 's/old_text/new_text/g' file.txt
+```
+54. 统计文件中某个单词出现的次数：
+```
+grep -o 'word' file.txt | wc -l
+```
+55. 将多个文件合并为一个文件：
+```
+cat file1.txt file2.txt > merged_file.txt
+```
+56. 在文件中查找特定文本：
+```
+grep 'search_text' file.txt
+```
+57. 在所有子目录中查找特定文件：
+```
+find /path/to/search -name 'filename'
+```
+58. 使用正则表达式匹配文本：
+```
+if [[ "$string" =~ regexpattern ]]
+then
+    commands
+fi
+```
+59. 将变量值写入文件：
+```
+echo "$variable" > file.txt
+```
+60. 将多行文本写入文件：
+```
+cat <<EOF > file.txt
+This is a
+multi-line
+text.
+EOF
+```
+61. 使用curl下载文件：
+```
+curl -O http://example.com/file.zip
+```
+62. 使用wget下载文件：
+```
+wget http://example.com/file.zip
+```
+63. 获取网络接口信息：
+```
+ifconfig
+```
+64. 获取磁盘使用情况：
+```
+df -h
+```
+65. 获取系统负载情况：
+```
+uptime
+```
+66. 获取系统内存使用情况：
+```
+free -m
+```
+67. 获取系统CPU使用情况：
+```
+top
+```
+68. 获取进程列表：
+```
+ps aux
+```
+69. 杀死进程：
+```
+kill PID
+```
+70. 使用nohup后台运行进程：
+```
+nohup command &
+```
+71. 获取当前用户信息：
+```
+whoami
+```
+72. 切换用户：
+```
+su username
+```
+73. 创建新用户：
+```
+adduser username
+```
+74. 创建新组：
+```
+addgroup groupname
+```
+75. 更改文件权限：
+```
+chmod permissions filename
+```
+76. 更改文件所有者和所属组：
+```
+chown owner:group filename
+```
+77. 创建软链接：
+```
+ln -s /path/to/source /path/to/link
+```
+78. 解压文件：
+```
+tar -xzvf file.tar.gz
+```
+79. 压缩文件：
+```
+tar -czvf archive.tar.gz file1 file2 directory/
+```
+80. 定时执行任务：
+```
+crontab -e
+```
+81. 列出指定目录下所有文件和目录：
+```
+ls /path/to/directory
+```
+82. 列出指定目录下所有文件和目录（包括隐藏文件）：
+```
+ls -a /path/to/directory
+```
+83. 列出文件的详细信息：
+```
+ls -l filename
+```
+84. 在Shell中执行Python脚本：
+```
+python script.py
+```
+85. 在Shell中执行Python代码：
+```
+python -c "print('Hello, World!')"
+```
+86. 在Shell中执行Ruby脚本：
+```
+ruby script.rb
+```
+87. 在Shell中执行Perl脚本：
+```
+perl script.pl
+```
+88. 在Shell中执行C程序：
+```
+gcc -o program program.c
+./program
+```
+89. 在Shell中执行Java程序：
+```
+javac program.java
+java program
+```
+90. 在Shell中执行Node.js程序：
+```
+node program.js
+```
+91. 列出所有正在运行的进程：
+```
+ps -ef
+```
+92. 杀死指定进程：
+```
+kill pid
+```
+93. 杀死所有指定进程：
+```
+killall processname
+```
+94. 查看系统内存使用情况：
+```
+free -m
+```
+95. 查看磁盘使用情况：
+```
+df -h
+```
+96. 查看网络连接情况：
+```
+netstat -a
+```
+97. 查看系统日志：
+```
+tail -f /var/log/messages
+```
+98. 查看Apache访问日志：
+```
+tail -f /var/log/httpd/access_log
+```
+99. 查看Apache错误日志：
+```
+tail -f /var/log/httpd/error_log
+```
+100. 查看MySQL日志：
+```
+tail -f /var/log/mysql.log
+```
+101. 递归查找指定目录下的文件：
+```
+find /path/to/directory -type f
+```
+102. 递归查找指定目录下的目录：
+```
+find /path/to/directory -type d
+```
+103. 查找指定目录下的文件或目录（按名称匹配）：
+```
+find /path/to/directory -name "name"
+```
+104. 查找指定目录下的文件或目录（按名称模糊匹配）：
+```
+find /path/to/directory -name "*name*"
+```
+105. 查找指定目录下的文件或目录（按名称不匹配）：
+```
+find /path/to/directory ! -name "name"
+```
+106. 查找指定目录下的文件或目录（按文件大小匹配）：
+```
+find /path/to/directory -size +10M
+```
+107. 查找指定目录下的文件或目录（按最后修改时间匹配）：
+```
+find /path/to/directory -mtime +7
+```
+108. 查找指定目录下的文件或目录（按所有者匹配）：
+```
+find /path/to/directory -user username
+```
+109. 查找指定目录下的文件或目录（按文件类型匹配）：
+```
+find /path/to/directory -type f -name "*.txt"
+```
+110. 查找指定目录下的文件或目录（按权限匹配）：
+```
+find /path/to/directory -perm 755
+```
+111. 压缩指定文件或目录：
+```
+tar czvf filename.tar.gz /path/to/directory
+```
+112. 解压缩指定压缩文件：
+```
+tar xzvf filename.tar.gz
+```
+113. 打包指定文件或目录：
+```
+tar cvf filename.tar /path/to/directory
+```
+114. 解包指定打包文件：
+```
+tar xvf filename.tar
+```
+115. 将压缩文件发送到远程服务器：
+```
+scp filename.tar.gz username@remote:/path/to/directory
+```
+116. 从远程服务器下载指定文件：
+```
+scp username@remote:/path/to/file /path/to/local/directory
+```
+117. 在当前目录下创建指定数量的空文件：
+```
+touch file{1..10}.txt
+```
+118. 在当前目录下创建指定数量的空目录：
+```
+mkdir dir{1..10}
+```
+119. 将指定目录下的所有文件复制到另一个目录：
+```
+cp -a /path/to/source/* /path/to/destination/
+```
+120. 从指定目录中删除指定名称的文件或目录：
+```
+rm -rf /path/to/directory/filename
+```
