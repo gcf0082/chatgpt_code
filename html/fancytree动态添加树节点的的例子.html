@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Demo</title>
+    <!-- 引入 Bootstrap 4 样式文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 Fancytree 样式文件 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.38.3/skin-bootstrap-n/ui.fancytree.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- 引入 jQuery 库文件 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- 引入 Bootstrap 4 JavaScript 文件 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+    <!-- 引入 Fancytree JavaScript 文件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.38.3/jquery.fancytree-all-deps.min.js"></script>
+    
+	<div class="container">
+		<h1>WebSocket Test</h1>
+		<div id="data-tree">
+			<!-- 这里是动态生成的树形结构 -->
+		</div>
+	</div>
+
+	    <script>
+      var data = [
+        {title: "Node 1"},
+        {title: "Node 2", key: "custom-key"},
+        {title: "Folder 3", folder: true, children: [
+          {title: "Node 3.1"},
+          {title: "Node 3.2"}
+        ]}
+      ];
+      $(function() {
+        $("#tree").fancytree({
+          source: data
+        });
+        // 给按钮绑定事件
+        $("#btn-append").click(function() {
+          var newData = [
+            {title: "Node 4"},
+            {title: "Node 5", key: "custom-key-2"},
+            {title: "Folder 6", folder: true, children: [
+              {title: "Node 6.1"},
+              {title: "Node 6.2"}
+            ]}
+          ];
+          var tree = $("#tree").fancytree("getTree");
+          //tree.reload(newData); // 将新数据附加到现有树形结构
+		  tree.getRootNode().addChildren(newData);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="tree"></div>
+    <button id="btn-append">Append Data</button>
+  </body>
+</html>
