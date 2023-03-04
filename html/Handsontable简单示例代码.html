@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Handsontable Example</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.min.css">
+</head>
+<body>
+  <div id="example"></div>
+  <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+  <script>
+  // 定义数据
+var data = [
+  { name: 'John', age: 28, city: 'New York' },
+  { name: 'Mary', age: 33, city: 'Los Angeles' },
+  { name: 'Bob', age: 42, city: 'Chicago' },
+  { name: 'Jane', age: 25, city: 'Houston' }
+];
+
+// 定义 Handsontable 表格配置
+var hotElement = document.querySelector('#example');
+var hotSettings = {
+  data: data,
+  columns: [
+    { data: 'name', title: 'Name' },
+    { data: 'age', title: 'Age' },
+    { data: 'city', title: 'City' }
+  ],
+  colHeaders: true,
+  columnSorting: true,
+  contextMenu: true,
+  minSpareRows: 1,
+  rowHeaders: true
+};
+
+// 创建 Handsontable 实例
+var hot = new Handsontable(hotElement, hotSettings);
+
+  </script>
+</body>
+</html>
