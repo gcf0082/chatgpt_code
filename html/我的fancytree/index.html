@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>WebSocket Demo</title>
+  <!-- 引入 Bootstrap 4 样式文件 -->
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+  <!-- 引入 Fancytree 样式文件 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.38.3/skin-bootstrap-n/ui.fancytree.min.css"
+    rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- 引入 jQuery 库文件 -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- 引入 Bootstrap 4 JavaScript 文件 -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+  <!-- 引入 Fancytree JavaScript 文件 -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.38.3/jquery.fancytree-all-deps.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-json-patch/3.1.1/fast-json-patch.min.js"></script>
+
+  <div class="container">
+    <h1>WebSocket Test</h1>
+    <div id="data-tree">
+      <!-- 这里是动态生成的树形结构 -->
+    </div>
+  </div>
+
+  <script>
+    var oldData = [
+      { title: "agent1", type: "agent", data: { agentName: "agent1", ip: "1.1.1.1" } },
+      {
+        title: "产品微服务清单", children: [
+          {
+            title: "FMService", children: [
+              { title: "/opt/gcf1", data: { path: "/opt/gcf1" } }
+            ]
+          },
+          { title: "MyService2" }
+        ]
+      }
+    ];
+
+    var newData = [
+      {
+        title: "产品微服务清单", children: [
+          {
+            title: "FMService", children: [
+              { title: "/opt/gcf2", data: { path: "/opt/gcf2" } }
+            ]
+          },
+          { title: "SMService" }
+        ]
+      }
+    ];
+
+    var newData2 = [
+      { title: "Node 4" },
+      { title: "Node 5", key: "custom-key-2" },
+      {
+        title: "Folder 6", folder: true, children: [
+          { title: "Node 6.1" },
+          { title: "Node 6.2" }
+        ]
+      }
+    ];
+
+    function appendMsgTreeToAgent(agentName, jsonData) {
+      var tree = $("#tree").fancytree("getTree");
+      const rootChildren = tree.getRootNode().getChildren();
+      for (const item of rootChildren) {
+        if (item?.type == 'agent' && item?.data?.agentName == agentName) {
+          item.addChildren(newData);
+        }
+      }
+    }
+
+
+    function merageMsgTreeToAgent(agentName, jsonData) {
+      var tree = $("#tree").fancytree("getTree");
+      const rootChildren = tree.getRootNode().getChildren();
+      let sameNode = undefined;
+      for (const item of rootChildren) {
+        if (item?.type == 'agent' && item?.data?.agentName == agentName) {
+          let newData = { title: "agent1", ...jsonData };
+          let patches = jsonpatch.compare(item.toDict(true), newData);
+          console.log(patches);
+          const newPatches = patches.filter((it) => it.op == "add");
+          console.log(newPatches);
+          var newData2 = jsonpatch.applyPatch(item.toDict(true), newPatches).newDocument;
+          item.applyPatch(newData2);
+          tree.reload();
+          //item.render(true);
+          break;
+          /*const agentChildren = item.getChildren();
+          for (const item2 of rootChildren) {
+            if (item2?.title == jsonData?.title) {
+              sameNode = item2;
+              break;
+            }
+          }
+          if (sameNode != undefined) {
+            let patches = jsonpatch.compare(sameNode.toDict(true), jsonData);
+            break;
+          } else {
+            item.addChildren(jsonData);
+          }
+        }*/
+
+        }
+      }
+    }
+
+    function updateMsgTreeToAgent(agentName, jsonData) {
+      var tree = $("#tree").fancytree("getTree");
+      const rootChildren = tree.getRootNode().getChildren();
+      for (const item of rootChildren) {
+        if (item?.type == 'agent' && item?.data?.agentName == agentName) {
+          item.addChildren(newData);
+        }
+      }
+    }
+
+    $(function () {
+      $("#tree").fancytree({
+        source: oldData,
+        minExpandLevel: 10,
+      });
+
+      $("#tree").fancytree("getRootNode").visit(function (node) {
+        node.setExpanded(true);
+      });
+      // 给按钮绑定事件
+      $("#btn-append").click(function () {
+        appendMsgTreeToAgent('agent1', newData);
+      });
+      $("#btn-merage").click(function () {
+        merageMsgTreeToAgent('agent1', newData);
+      });
+
+    });
+  </script>
+  </head>
+
+  <body>
+    <div id="tree"></div>
+    <button id="btn-append">添加信息树</button>
+    <button id="btn-update">更新信息树</button>
+    <button id="btn-merage">合并信息树</button>
+  </body>
+
+</html>
