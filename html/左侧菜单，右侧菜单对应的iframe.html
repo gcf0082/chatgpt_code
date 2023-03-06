@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>菜单页面</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        #menu {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 200px;
+            background-color: #eee;
+            overflow-y: scroll;
+        }
+        
+        #menu ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        #menu li {
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #menu li:hover {
+            background-color: #ddd;
+        }
+        
+        #content {
+            margin-left: 200px;
+            padding: 20px;
+            height: 100%!;(MISSING)
+            box-sizing: border-box;
+        }
+        
+        #tabs {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            background-color: #fff;
+            transition: background-color 0.3s;
+        }
+        
+        .tab.active {
+            background-color: #ddd;
+        }
+        
+        iframe {
+            border: none;
+            width: 100%!;(MISSING)
+            height: calc(100%!p(MISSING)x);
+        }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <ul>
+            <li data-src="page1.html">菜单项1</li>
+            <li data-src="page2.html">菜单项2</li>
+            <li data-src="page3.html">菜单项3</li>
+        </ul>
+    </div>
+    <div id="content">
+        <div id="tabs"></div>
+        <iframe id="page" src=""></iframe>
+    </div>
+    <script>
+        var menuItems = document.querySelectorAll("#menu li");
+        var tabsContainer = document.querySelector("#tabs");
+        var pageFrame = document.querySelector("#page");
+        var activeTab = null;
+        
+        function loadPage(src) {
+            pageFrame.src = src;
+        }
+        
+        function activateTab(tab) {
+            if (activeTab) {
+                activeTab.classList.remove("active");
+            }
+            tab.classList.add("active");
+            activeTab = tab;
+        }
+        
+        menuItems.forEach(function(item) {
+            item.addEventListener("click", function() {
+                loadPage(this.getAttribute("data-src"));
+            });
+        });
+        
+        tabsContainer.addEventListener("click", function(event) {
+            if (event.target.classList.contains("tab")) {
+                activateTab(event.target);
+            }
+        });
+        
+        pageFrame.addEventListener("load", function() {
+            var pageTitle = pageFrame.contentDocument.title;
+            var newTab = document.createElement("div");
+            newTab.classList.add("tab");
+            newTab.textContent = pageTitle;
+            tabsContainer.appendChild(newTab);
+            activateTab(newTab);
+        });
+    </script>
+</body>
+</html>
